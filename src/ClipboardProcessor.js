@@ -41,6 +41,10 @@ const ClipboardProcessor = () => {
     e.preventDefault();
     const pastedText =
       e.clipboardData.getData("text/html") || e.clipboardData.getData("text");
+    handleInput(pastedText);
+  };
+
+  const handleInput = (pastedText) => {
     setInput(pastedText);
     setOutput(processClipboard(pastedText));
   };
@@ -60,7 +64,7 @@ const ClipboardProcessor = () => {
           className="w-full h-40 p-2 border rounded"
           onPaste={handlePaste}
           value={input}
-          onChange={(e) => setInput(e.target.value)}
+          onChange={(e) => handleInput(e.target.value)}
           placeholder="Paste your content here..."
         />
       </div>
