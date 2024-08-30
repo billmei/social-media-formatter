@@ -1,7 +1,7 @@
 {
-  "name": "social-media-formatting",
+  "name": "social-media-formatter",
   "version": "0.1.0",
-  "homepage": "https://billmei.github.io/social-media-formatting",
+  "homepage": "https://billmei.github.io/social-media-formatter",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.17.0",

@@ -1,3 +1,3 @@
-# social-media-formatting
+# social-media-formatter
 
-Copy/paste blog post formatting into plaintext for social media posts
+Copy/paste blog post formatter into plaintext for social media posts
