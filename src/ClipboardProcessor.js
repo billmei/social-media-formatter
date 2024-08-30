@@ -6,35 +6,33 @@ const ClipboardProcessor = () => {
 
   const processClipboard = (text) => {
     let counter = 1;
-    const linkMap = new Map();
-    const footnoteMap = new Map();
+    const referenceMap = new Map();
 
-    // Step 1: Convert to plaintext and collect links and footnotes
     const plainText = text
       .replace(
-        /<a(?:\s+(?:href="[^"]*")?)[^>]*>(.*?)<\/a>/gi,
-        (match, content) => {
-          linkMap.set(counter, content);
-          return `${content}[${counter++}]`;
+        /<(a|sup)(?:\s+(?:href="[^"]*")?)[^>]*>(.*?)<\/\1>/gi,
+        (match, tag, content) => {
+          if (tag.toLowerCase() === "a") {
+            referenceMap.set(counter, content);
+            return `${content}[${counter++}]`;
+          } else if (tag.toLowerCase() === "sup") {
+            const number = content.match(/\d+/);
+            if (number) {
+              referenceMap.set(counter, number[0]);
+              return `[${counter++}]`;
+            }
+            return "";
+          }
         }
       )
-      .replace(/<sup>(\d+)<\/sup>/gi, (match, number) => {
-        footnoteMap.set(counter, number);
-        return `[${counter++}]`;
-      })
-      .replace(/<p>/gi, "\n\n") // Preserve paragraph breaks
-      .replace(/<br\s*\/?>/gi, "\n") // Preserve line breaks
+
+      .replace(/<p[^>]*>/gi, "\n\n") // Preserve paragraph breaks
+      .replace(/<br[^>]*>/gi, "\n") // Preserve line breaks
       .replace(/<[^>]+>/g, "") // Remove any remaining HTML tags
       .replace(/\n{3,}/g, "\n\n") // Remove excessive newlines
       .trim(); // Trim leading and trailing whitespace
 
-    // Step 2 & 3: Generate references
-    const references = [...linkMap.entries(), ...footnoteMap.entries()]
-      .sort(([a], [b]) => a - b)
-      .map(([index, content]) => `[${index}] ${content}`)
-      .join("\n");
-
-    return plainText + "\n\nReferences:\n" + references;
+    return plainText;
   };
 
   const handlePaste = (e) => {
