@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { parse } from "parse5";
 
 const ClipboardProcessor = () => {
   const [input, setInput] = useState("");
@@ -7,28 +8,40 @@ const ClipboardProcessor = () => {
   const processClipboard = (text) => {
     let counter = 1;
     const referenceMap = new Map();
+    const document = parse(text);
 
-    const plainText = text
-      .replace(
-        /<(a|sup)(?:\s+(?:href="[^"]*")?)[^>]*>(.*?)<\/\1>/gi,
-        (match, tag, content) => {
-          if (tag.toLowerCase() === "a") {
-            referenceMap.set(counter, content);
-            return `${content}[${counter++}]`;
-          } else if (tag.toLowerCase() === "sup") {
-            const number = content.match(/\d+/);
-            if (number) {
-              referenceMap.set(counter, number[0]);
-              return `[${counter++}]`;
-            }
-            return "";
+    const processNode = (node) => {
+      if (node.nodeName === "#text") {
+        return node.value;
+      }
+
+      if (node.nodeName === "a" || node.nodeName === "sup") {
+        const content = node.childNodes.map(processNode).join("");
+        if (node.nodeName === "a") {
+          referenceMap.set(counter, content);
+          return `${content}[${counter++}]`;
+        } else if (node.nodeName === "sup") {
+          const number = content.match(/\d+/);
+          if (number) {
+            referenceMap.set(counter, number[0]);
+            return `[${counter++}]`;
           }
+          return "";
         }
-      )
+      }
 
-      .replace(/<p[^>]*>/gi, "\n\n") // Preserve paragraph breaks
-      .replace(/<br[^>]*>/gi, "\n") // Preserve line breaks
-      .replace(/<[^>]+>/g, "") // Remove any remaining HTML tags
+      if (node.nodeName === "p") {
+        return "\n\n" + node.childNodes.map(processNode).join("");
+      }
+
+      if (node.nodeName === "br") {
+        return "\n";
+      }
+
+      return node.childNodes ? node.childNodes.map(processNode).join("") : "";
+    };
+
+    const plainText = processNode(document)
       .replace(/\n{3,}/g, "\n\n") // Remove excessive newlines
       .trim(); // Trim leading and trailing whitespace
 
