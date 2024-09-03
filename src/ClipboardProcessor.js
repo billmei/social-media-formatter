@@ -1,10 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { parse, serialize } from "parse5";
 
 const ClipboardProcessor = () => {
   const [input, setInput] = useState("");
   const [plainTextOutput, setPlainTextOutput] = useState("");
   const [formattedOutput, setFormattedOutput] = useState("");
+  const [copyStatus, setCopyStatus] = useState({
+    plain: false,
+    formatted: false,
+  });
 
   const processClipboard = (text) => {
     let counter = 1;
@@ -37,6 +41,18 @@ const ClipboardProcessor = () => {
 
       if (node.nodeName === "br") {
         return "\n";
+      }
+
+      if (node.nodeName.match(/^h[1-6]$/)) {
+        const content = node.childNodes.map(processNodePlainText).join("");
+        return (
+          "\n\n" +
+          content
+            .split("")
+            .map((char) => String.fromCodePoint(char.charCodeAt(0) + 120211))
+            .join("") +
+          "\n\n"
+        );
       }
 
       return node.childNodes
@@ -87,11 +103,35 @@ const ClipboardProcessor = () => {
 
   const handleCopyPlainText = () => {
     navigator.clipboard.writeText(plainTextOutput);
+    setCopyStatus({ ...copyStatus, plain: true });
   };
 
   const handleCopyFormatted = () => {
-    navigator.clipboard.writeText(formattedOutput);
+    const blob = new Blob([formattedOutput], { type: "text/html" });
+    const item = new ClipboardItem({ "text/html": blob });
+    navigator.clipboard.write([item]);
+    setCopyStatus({ ...copyStatus, formatted: true });
   };
+
+  useEffect(() => {
+    if (copyStatus.plain) {
+      const timer = setTimeout(
+        () => setCopyStatus({ ...copyStatus, plain: false }),
+        2000
+      );
+      return () => clearTimeout(timer);
+    }
+  }, [copyStatus.plain]);
+
+  useEffect(() => {
+    if (copyStatus.formatted) {
+      const timer = setTimeout(
+        () => setCopyStatus({ ...copyStatus, formatted: false }),
+        2000
+      );
+      return () => clearTimeout(timer);
+    }
+  }, [copyStatus.formatted]);
 
   return (
     <div className="max-w-4xl mx-auto p-4">
@@ -120,7 +160,7 @@ const ClipboardProcessor = () => {
             className="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
             onClick={handleCopyPlainText}
           >
-            Copy Plain Text
+            {copyStatus.plain ? "Copied!" : "Copy Plain Text"}
           </button>
         </div>
         <div>
@@ -134,7 +174,7 @@ const ClipboardProcessor = () => {
             className="mt-2 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
             onClick={handleCopyFormatted}
           >
-            Copy Formatted HTML
+            {copyStatus.formatted ? "Copied!" : "Copy Formatted HTML"}
           </button>
         </div>
       </div>
