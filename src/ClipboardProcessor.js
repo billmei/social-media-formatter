@@ -44,12 +44,24 @@ const ClipboardProcessor = () => {
       }
 
       if (node.nodeName.match(/^h[1-6]$/)) {
+        // Make headers bold unicode text
         const content = node.childNodes.map(processNodePlainText).join("");
         return (
           "\n\n" +
           content
             .split("")
-            .map((char) => String.fromCodePoint(char.charCodeAt(0) + 120211))
+            .map((char) => {
+              if (char >= "a" && char <= "z") {
+                return String.fromCodePoint(
+                  char.charCodeAt(0) + ("𝗮".codePointAt(0) - "a".charCodeAt(0))
+                );
+              } else if (char >= "A" && char <= "Z") {
+                return String.fromCodePoint(
+                  char.charCodeAt(0) + ("𝗔".codePointAt(0) - "A".charCodeAt(0))
+                );
+              }
+              return char;
+            })
             .join("") +
           "\n\n"
         );
