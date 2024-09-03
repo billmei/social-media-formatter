@@ -74,49 +74,42 @@ const ClipboardProcessor = () => {
 
     const processNodeFormatted = (node) => {
       if (node.nodeName === "sup") {
-        const supContent = serialize({
-          nodeName: "sup",
-          tagName: "sup",
-          childNodes: node.childNodes,
-          attrs: node.attrs,
-        });
-
-        return {
+        const spanNode = {
           nodeName: "span",
-          childNodes: [
-            {
-              nodeName: "#text",
-              value: "[",
-            },
-            {
-              nodeName: "span",
-              value: supContent,
-            },
-            {
-              nodeName: "#text",
-              value: "]",
-            },
-          ],
+          tagName: "span",
+          attrs: [],
+          namespaceURI: "http://www.w3.org/1999/xhtml",
+          childNodes: [],
         };
+
+        const openBracketNode = {
+          nodeName: "#text",
+          value: "[",
+          parentNode: spanNode,
+        };
+
+        const newChildNodes = node.childNodes.map(processNodeFormatted);
+
+        const closeBracketNode = {
+          nodeName: "#text",
+          value: "]",
+          parentNode: spanNode,
+        };
+
+        // Add the bracket nodes and the processed children to the span
+        spanNode.childNodes = [
+          openBracketNode,
+          ...newChildNodes,
+          closeBracketNode,
+        ];
+
+        return spanNode;
       }
 
       if (node.childNodes) {
-        if (node.nodeName === "body") {
-          console.log(node);
-        }
-
-        const result = node.childNodes.map(processNodeFormatted);
-
-        if (node.nodeName === "body") {
-          console.log(result);
-        }
-        node.childNodes = result;
-        if (node.nodeName === "body") {
-          console.log(node);
-        }
+        node.childNodes = node.childNodes.map(processNodeFormatted);
       }
 
-      const serialized = serialize(node);
       return node;
     };
 
