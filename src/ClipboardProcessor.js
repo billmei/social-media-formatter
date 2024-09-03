@@ -160,31 +160,31 @@ const ClipboardProcessor = () => {
       <div className="grid grid-cols-2 gap-4">
         <div>
           <label className="block mb-2">Plaintext output for LinkedIn:</label>
-          <textarea
-            className="w-full h-40 p-2 border rounded"
-            value={plainTextOutput}
-            readOnly
-          />
           <button
             className="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
             onClick={handleCopyPlainText}
           >
             {copyStatus.plain ? "Copied!" : "Copy Plain Text"}
           </button>
+          <textarea
+            className="w-full h-96 p-2 border rounded"
+            value={plainTextOutput}
+            readOnly
+          />
         </div>
         <div>
           <label className="block mb-2">Formatted output for Substack:</label>
-          <textarea
-            className="w-full h-40 p-2 border rounded"
-            value={formattedOutput}
-            readOnly
-          />
           <button
             className="mt-2 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
             onClick={handleCopyFormatted}
           >
             {copyStatus.formatted ? "Copied!" : "Copy Formatted HTML"}
           </button>
+          <textarea
+            className="w-full h-96 p-2 border rounded"
+            value={formattedOutput}
+            readOnly
+          />
         </div>
       </div>
     </div>
