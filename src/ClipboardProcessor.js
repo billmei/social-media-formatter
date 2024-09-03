@@ -77,7 +77,7 @@ const ClipboardProcessor = () => {
         const spanNode = {
           nodeName: "span",
           tagName: "span",
-          attrs: [],
+          attrs: [{ name: "style", value: "display: inline;" }],
           namespaceURI: "http://www.w3.org/1999/xhtml",
           childNodes: [],
         };
@@ -104,6 +104,12 @@ const ClipboardProcessor = () => {
         ];
 
         return spanNode;
+      }
+
+      if (node.nodeName === "a" && node?.parentNode?.nodeName === "sup") {
+        node.attrs = node.attrs.filter(
+          (attr) => attr.name !== "class" && attr.name !== "rel"
+        );
       }
 
       if (node.childNodes) {
