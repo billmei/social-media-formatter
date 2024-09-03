@@ -74,12 +74,13 @@ const ClipboardProcessor = () => {
 
     const processNodeFormatted = (node) => {
       if (node.nodeName === "sup") {
-        const content = node.childNodes.map(processNodeFormatted).join("");
-        const number = content.match(/\d+/);
-        if (number) {
-          return `[${number[0]}]`;
-        }
-        return "";
+        const supContent = serialize({
+          nodeName: "sup",
+          tagName: "sup",
+          childNodes: node.childNodes,
+          attrs: node.attrs,
+        });
+        return `[${supContent}]`;
       }
 
       if (node.childNodes) {
