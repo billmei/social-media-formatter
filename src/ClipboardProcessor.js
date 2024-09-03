@@ -26,12 +26,8 @@ const ClipboardProcessor = () => {
           referenceMap.set(counter, content);
           return `${content}[${counter++}]`;
         } else if (node.nodeName === "sup") {
-          const number = content.match(/\d+/);
-          if (number) {
-            referenceMap.set(counter, number[0]);
-            return `[${counter++}]`;
-          }
-          return "";
+          referenceMap.set(counter, content);
+          return `[${counter++}]`;
         }
       }
 
