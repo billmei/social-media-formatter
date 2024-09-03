@@ -80,13 +80,43 @@ const ClipboardProcessor = () => {
           childNodes: node.childNodes,
           attrs: node.attrs,
         });
-        return `[${supContent}]`;
+
+        return {
+          nodeName: "span",
+          childNodes: [
+            {
+              nodeName: "#text",
+              value: "[",
+            },
+            {
+              nodeName: "span",
+              value: supContent,
+            },
+            {
+              nodeName: "#text",
+              value: "]",
+            },
+          ],
+        };
       }
 
       if (node.childNodes) {
-        node.childNodes = node.childNodes.map(processNodeFormatted);
+        if (node.nodeName === "body") {
+          console.log(node);
+        }
+
+        const result = node.childNodes.map(processNodeFormatted);
+
+        if (node.nodeName === "body") {
+          console.log(result);
+        }
+        node.childNodes = result;
+        if (node.nodeName === "body") {
+          console.log(node);
+        }
       }
 
+      const serialized = serialize(node);
       return node;
     };
 
