@@ -20,15 +20,19 @@ const ClipboardProcessor = () => {
         return node.value;
       }
 
-      if (node.nodeName === "a" || node.nodeName === "sup") {
+      if (node.nodeName === "a") {
         const content = node.childNodes.map(processNodePlainText).join("");
-        if (node.nodeName === "a") {
+        if (!node.parentNode || node.parentNode.nodeName !== "sup") {
           referenceMap.set(counter, content);
           return `${content}[${counter++}]`;
-        } else if (node.nodeName === "sup") {
-          referenceMap.set(counter, content);
-          return `[${counter++}]`;
         }
+        return content;
+      }
+
+      if (node.nodeName === "sup") {
+        const content = node.childNodes.map(processNodePlainText).join("");
+        referenceMap.set(counter, content);
+        return `[${counter++}]`;
       }
 
       if (node.nodeName === "p") {
