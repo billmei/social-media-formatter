@@ -74,45 +74,39 @@ const ClipboardProcessor = () => {
 
     const processNodeFormatted = (node) => {
       if (node.nodeName === "sup") {
-        const spanNode = {
+        // Replace the `<sup>` with a `<span>`
+        return {
           nodeName: "span",
           tagName: "span",
-          attrs: [{ name: "style", value: "display: inline;" }],
           namespaceURI: "http://www.w3.org/1999/xhtml",
-          childNodes: [],
+          childNodes: node.childNodes.map(processNodeFormatted),
         };
+      }
+
+      // If this is a footnote, wrap it in []
+      if (node.nodeName === "a" && node?.parentNode?.nodeName === "sup") {
+        node.attrs = node.attrs.filter(
+          // Substack already has .footnote as a classname, so we need to remove it to avoid namespace collision
+          (attr) => attr.name !== "class" && attr.name !== "rel"
+        );
 
         const openBracketNode = {
           nodeName: "#text",
           value: "[",
-          parentNode: spanNode,
+          parentNode: node,
         };
-
-        const newChildNodes = node.childNodes.map(processNodeFormatted);
-
         const closeBracketNode = {
           nodeName: "#text",
           value: "]",
-          parentNode: spanNode,
+          parentNode: node,
         };
 
-        // Add the bracket nodes and the processed children to the span
-        spanNode.childNodes = [
+        node.childNodes = [
           openBracketNode,
-          ...newChildNodes,
+          ...node.childNodes,
           closeBracketNode,
         ];
-
-        return spanNode;
-      }
-
-      if (node.nodeName === "a" && node?.parentNode?.nodeName === "sup") {
-        node.attrs = node.attrs.filter(
-          (attr) => attr.name !== "class" && attr.name !== "rel"
-        );
-      }
-
-      if (node.childNodes) {
+      } else if (node.childNodes) {
         node.childNodes = node.childNodes.map(processNodeFormatted);
       }
 
