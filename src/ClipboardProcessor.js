@@ -17,8 +17,7 @@ const ClipboardProcessor = () => {
   const processClipboard = (text) => {
     let counter = 1;
     const referenceMap = new Map();
-    const preprocessed = preprocess(text);
-    const document = parse(preprocessed);
+    const document = parse(text);
 
     const processNodePlainText = (node) => {
       if (node.nodeName === "#text") {
@@ -137,8 +136,9 @@ const ClipboardProcessor = () => {
   };
 
   const handleInput = (pastedText) => {
-    setInput(pastedText);
-    const { plainText, formattedHtml } = processClipboard(pastedText);
+    const preprocessed = preprocess(pastedText);
+    setInput(preprocessed);
+    const { plainText, formattedHtml } = processClipboard(preprocessed);
     setPlainTextOutput(plainText);
     setFormattedOutput(formattedHtml);
   };
