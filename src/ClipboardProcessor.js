@@ -83,6 +83,7 @@ const ClipboardProcessor = () => {
         return {
           nodeName: "span",
           tagName: "span",
+          attrs: [],
           namespaceURI: "http://www.w3.org/1999/xhtml",
           childNodes: node.childNodes.map(processNodeFormatted),
         };
