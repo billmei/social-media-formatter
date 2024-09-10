@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { parse, serialize } from "parse5";
 
 const preprocess = (text) => {
-  return text.replace(/<meta[^>]*>/gi, "");
+  return text.replace(/<meta[^>]*>/gi, "").replace(/style="[^"]*"/g, "");
 };
 
 const ClipboardProcessor = () => {
@@ -18,7 +18,6 @@ const ClipboardProcessor = () => {
     let counter = 1;
     const referenceMap = new Map();
     const preprocessed = preprocess(text);
-    console.log(preprocessed);
     const document = parse(preprocessed);
 
     const processNodePlainText = (node) => {
