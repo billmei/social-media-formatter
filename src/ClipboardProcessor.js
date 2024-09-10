@@ -11,11 +11,7 @@ const ClipboardProcessor = () => {
   const [plainTextOutputWithoutNewlines, setPlainTextOutputWithoutNewlines] =
     useState("");
   const [formattedOutput, setFormattedOutput] = useState("");
-  const [copyStatus, setCopyStatus] = useState({
-    plain: false,
-    plainWithoutNewlines: false,
-    formatted: false,
-  });
+  const [copiedType, setCopiedType] = useState(null);
 
   const processClipboard = (text) => {
     let counter = 1;
@@ -147,52 +143,40 @@ const ClipboardProcessor = () => {
     setFormattedOutput(formattedHtml);
   };
 
-  const handleCopyPlainText = () => {
-    navigator.clipboard.writeText(plainTextOutput);
-    setCopyStatus({ ...copyStatus, plain: true });
-  };
-
-  const handleCopyPlainTextWithoutNewlines = () => {
-    navigator.clipboard.writeText(plainTextOutputWithoutNewlines);
-    setCopyStatus({ ...copyStatus, plainWithoutNewlines: true });
-  };
-
-  const handleCopyFormatted = () => {
-    const blob = new Blob([formattedOutput], { type: "text/html" });
-    const item = new ClipboardItem({ "text/html": blob });
-    navigator.clipboard.write([item]);
-    setCopyStatus({ ...copyStatus, formatted: true });
+  const handleCopy = (type) => {
+    let content;
+    switch (type) {
+      case "plain":
+        content = plainTextOutput;
+        navigator.clipboard.writeText(content);
+        break;
+      case "plainWithoutNewlines":
+        content = plainTextOutputWithoutNewlines;
+        navigator.clipboard.writeText(content);
+        break;
+      case "formatted":
+        content = formattedOutput;
+        const blob = new Blob([content], { type: "text/html" });
+        const item = new ClipboardItem({ "text/html": blob });
+        navigator.clipboard.write([item]);
+        break;
+      default:
+        return;
+    }
+    setCopiedType(type);
   };
 
   useEffect(() => {
-    if (copyStatus.plain) {
-      const timer = setTimeout(
-        () => setCopyStatus({ ...copyStatus, plain: false }),
-        2000
-      );
+    if (copiedType) {
+      const timer = setTimeout(() => setCopiedType(null), 2000);
       return () => clearTimeout(timer);
     }
-  }, [copyStatus.plain]);
+  }, [copiedType]);
 
-  useEffect(() => {
-    if (copyStatus.plainWithoutNewlines) {
-      const timer = setTimeout(
-        () => setCopyStatus({ ...copyStatus, plainWithoutNewlines: false }),
-        2000
-      );
-      return () => clearTimeout(timer);
-    }
-  }, [copyStatus.plainWithoutNewlines]);
-
-  useEffect(() => {
-    if (copyStatus.formatted) {
-      const timer = setTimeout(
-        () => setCopyStatus({ ...copyStatus, formatted: false }),
-        2000
-      );
-      return () => clearTimeout(timer);
-    }
-  }, [copyStatus.formatted]);
+  const copyButtonText = (type) =>
+    copiedType === type
+      ? "Copied!"
+      : `Copy ${type === "formatted" ? "Formatted HTML" : "Plain Text"}`;
 
   return (
     <div className="max-w-4xl mx-auto p-4">
@@ -214,9 +198,9 @@ const ClipboardProcessor = () => {
           <label className="block mb-2">Plaintext output for ConvertKit:</label>
           <button
             className="mt-2 bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600"
-            onClick={handleCopyPlainTextWithoutNewlines}
+            onClick={() => handleCopy("plainWithoutNewlines")}
           >
-            {copyStatus.plainWithoutNewlines ? "Copied!" : "Copy Plain Text"}
+            {copyButtonText("plainWithoutNewlines")}
           </button>
           <textarea
             className="w-full h-96 p-2 border rounded"
@@ -228,9 +212,9 @@ const ClipboardProcessor = () => {
           <label className="block mb-2">Formatted output for Substack:</label>
           <button
             className="mt-2 bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600"
-            onClick={handleCopyFormatted}
+            onClick={() => handleCopy("formatted")}
           >
-            {copyStatus.formatted ? "Copied!" : "Copy Formatted HTML"}
+            {copyButtonText("formatted")}
           </button>
           <textarea
             className="w-full h-96 p-2 border rounded"
@@ -242,9 +226,9 @@ const ClipboardProcessor = () => {
           <label className="block mb-2">Plaintext output for LinkedIn:</label>
           <button
             className="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-            onClick={handleCopyPlainText}
+            onClick={() => handleCopy("plain")}
           >
-            {copyStatus.plain ? "Copied!" : "Copy Plain Text"}
+            {copyButtonText("plain")}
           </button>
           <textarea
             className="w-full h-96 p-2 border rounded"
