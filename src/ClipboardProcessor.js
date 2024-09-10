@@ -195,20 +195,6 @@ const ClipboardProcessor = () => {
       </div>
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block mb-2">Plaintext output for ConvertKit:</label>
-          <button
-            className="mt-2 bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600"
-            onClick={() => handleCopy("plainWithoutNewlines")}
-          >
-            {copyButtonText("plainWithoutNewlines")}
-          </button>
-          <textarea
-            className="w-full h-96 p-2 border rounded"
-            value={plainTextOutputWithoutNewlines}
-            readOnly
-          />
-        </div>
-        <div>
           <label className="block mb-2">Formatted output for Substack:</label>
           <button
             className="mt-2 bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600"
@@ -219,6 +205,20 @@ const ClipboardProcessor = () => {
           <textarea
             className="w-full h-96 p-2 border rounded"
             value={formattedOutput}
+            readOnly
+          />
+        </div>
+        <div>
+          <label className="block mb-2">Plaintext output for ConvertKit:</label>
+          <button
+            className="mt-2 bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600"
+            onClick={() => handleCopy("plainWithoutNewlines")}
+          >
+            {copyButtonText("plainWithoutNewlines")}
+          </button>
+          <textarea
+            className="w-full h-96 p-2 border rounded"
+            value={plainTextOutputWithoutNewlines}
             readOnly
           />
         </div>
