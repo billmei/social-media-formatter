@@ -8,9 +8,12 @@ const preprocess = (text) => {
 const ClipboardProcessor = () => {
   const [input, setInput] = useState("");
   const [plainTextOutput, setPlainTextOutput] = useState("");
+  const [plainTextOutputWithoutNewlines, setPlainTextOutputWithoutNewlines] =
+    useState("");
   const [formattedOutput, setFormattedOutput] = useState("");
   const [copyStatus, setCopyStatus] = useState({
     plain: false,
+    plainWithoutNewlines: false,
     formatted: false,
   });
 
@@ -140,12 +143,18 @@ const ClipboardProcessor = () => {
     setInput(preprocessed);
     const { plainText, formattedHtml } = processClipboard(preprocessed);
     setPlainTextOutput(plainText);
+    setPlainTextOutputWithoutNewlines(plainText.replace(/\n\n/gi, "\n"));
     setFormattedOutput(formattedHtml);
   };
 
   const handleCopyPlainText = () => {
     navigator.clipboard.writeText(plainTextOutput);
     setCopyStatus({ ...copyStatus, plain: true });
+  };
+
+  const handleCopyPlainTextWithoutNewlines = () => {
+    navigator.clipboard.writeText(plainTextOutputWithoutNewlines);
+    setCopyStatus({ ...copyStatus, plainWithoutNewlines: true });
   };
 
   const handleCopyFormatted = () => {
@@ -164,6 +173,16 @@ const ClipboardProcessor = () => {
       return () => clearTimeout(timer);
     }
   }, [copyStatus.plain]);
+
+  useEffect(() => {
+    if (copyStatus.plainWithoutNewlines) {
+      const timer = setTimeout(
+        () => setCopyStatus({ ...copyStatus, plainWithoutNewlines: false }),
+        2000
+      );
+      return () => clearTimeout(timer);
+    }
+  }, [copyStatus.plainWithoutNewlines]);
 
   useEffect(() => {
     if (copyStatus.formatted) {
@@ -192,6 +211,34 @@ const ClipboardProcessor = () => {
       </div>
       <div className="grid grid-cols-2 gap-4">
         <div>
+          <label className="block mb-2">Plaintext output for ConvertKit:</label>
+          <button
+            className="mt-2 bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600"
+            onClick={handleCopyPlainTextWithoutNewlines}
+          >
+            {copyStatus.plainWithoutNewlines ? "Copied!" : "Copy Plain Text"}
+          </button>
+          <textarea
+            className="w-full h-96 p-2 border rounded"
+            value={plainTextOutputWithoutNewlines}
+            readOnly
+          />
+        </div>
+        <div>
+          <label className="block mb-2">Formatted output for Substack:</label>
+          <button
+            className="mt-2 bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600"
+            onClick={handleCopyFormatted}
+          >
+            {copyStatus.formatted ? "Copied!" : "Copy Formatted HTML"}
+          </button>
+          <textarea
+            className="w-full h-96 p-2 border rounded"
+            value={formattedOutput}
+            readOnly
+          />
+        </div>
+        <div>
           <label className="block mb-2">Plaintext output for LinkedIn:</label>
           <button
             className="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
@@ -202,20 +249,6 @@ const ClipboardProcessor = () => {
           <textarea
             className="w-full h-96 p-2 border rounded"
             value={plainTextOutput}
-            readOnly
-          />
-        </div>
-        <div>
-          <label className="block mb-2">Formatted output for Substack:</label>
-          <button
-            className="mt-2 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
-            onClick={handleCopyFormatted}
-          >
-            {copyStatus.formatted ? "Copied!" : "Copy Formatted HTML"}
-          </button>
-          <textarea
-            className="w-full h-96 p-2 border rounded"
-            value={formattedOutput}
             readOnly
           />
         </div>
