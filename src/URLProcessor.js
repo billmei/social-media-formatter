@@ -12,9 +12,12 @@ const URLProcessor = () => {
     setOriginalURL(url);
 
     // Extract the slug from the URL
-    const match = url.match(/\/([^\/]+)$/);
-    if (match) {
-      const extractedSlug = match[1];
+    const urlObject = new URL(url);
+    const pathParts = urlObject.pathname.split("/");
+    const blogIndex = pathParts.indexOf("blog");
+
+    if (blogIndex !== -1 && blogIndex < pathParts.length - 1) {
+      const extractedSlug = pathParts[blogIndex + 1];
       setSlug(extractedSlug);
       setSubstackPostURL(`https://billmei.substack.com/p/${extractedSlug}`);
       setSubstackCommentsURL(
