@@ -47,19 +47,34 @@ const URLProcessor = () => {
     setTimeout(() => setCopiedType(null), 2000);
   };
 
-  const copyButtonText = (type) =>
-    copiedType === type ? "Copied!" : `Copy ${type}`;
+  const copyButtonText = (type) => {
+    let content;
+    switch (type) {
+      case "slug":
+        content = "slug";
+        break;
+      case "substackPost":
+        content = "Substack Post URL";
+        break;
+      case "substackComments":
+        content = "Substack Comments URL";
+        break;
+      default:
+        return;
+    }
+    return copiedType === type ? "Copied!" : `Copy ${content}`;
+  };
 
   return (
     <div className="mb-8">
       <div className="mb-4">
-        <label className="block mb-2">Original URL:</label>
+        <label className="block mb-2">Past original URL here:</label>
         <input
           type="text"
           className="w-full p-2 border rounded"
           value={originalURL}
           onChange={handleOriginalURLChange}
-          placeholder="https://billmei.net/blog/simply-explained"
+          placeholder="https://billmei.net/blog/slug"
         />
       </div>
 
@@ -91,7 +106,7 @@ const URLProcessor = () => {
             className="mt-2 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
             onClick={() => handleCopy("substackPost")}
           >
-            {copyButtonText("Substack post URL")}
+            {copyButtonText("substackPost")}
           </button>
         </div>
         <div>
@@ -106,7 +121,7 @@ const URLProcessor = () => {
             className="mt-2 bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600"
             onClick={() => handleCopy("substackComments")}
           >
-            {copyButtonText("Substack comments URL")}
+            {copyButtonText("substackComments")}
           </button>
         </div>
       </div>
