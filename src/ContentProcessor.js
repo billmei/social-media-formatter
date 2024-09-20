@@ -5,7 +5,7 @@ const preprocess = (text) => {
   return text.replace(/<meta[^>]*>/gi, "").replace(/style="[^"]*"/g, "");
 };
 
-const ClipboardProcessor = () => {
+const ContentProcessor = () => {
   const [input, setInput] = useState("");
   const [plainTextOutput, setPlainTextOutput] = useState("");
   const [plainTextOutputWithoutNewlines, setPlainTextOutputWithoutNewlines] =
@@ -241,4 +241,4 @@ const ClipboardProcessor = () => {
   );
 };
 
-export default ClipboardProcessor;
+export default ContentProcessor;
