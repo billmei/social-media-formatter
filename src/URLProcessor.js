@@ -71,7 +71,7 @@ const URLProcessor = () => {
   return (
     <div className="mb-8">
       <div className="mb-4">
-        <label className="block mb-2">Past original URL here:</label>
+        <label className="block mb-2">Paste original URL here:</label>
         <input
           type="text"
           className="w-full p-2 border rounded"
