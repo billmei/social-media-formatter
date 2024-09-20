@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/social-media-formatter/static/css/main.0e704a1a.css",
-    "main.js": "/social-media-formatter/static/js/main.d8eae3f7.js",
+    "main.js": "/social-media-formatter/static/js/main.c2082070.js",
     "index.html": "/social-media-formatter/index.html",
     "main.0e704a1a.css.map": "/social-media-formatter/static/css/main.0e704a1a.css.map",
-    "main.d8eae3f7.js.map": "/social-media-formatter/static/js/main.d8eae3f7.js.map"
+    "main.c2082070.js.map": "/social-media-formatter/static/js/main.c2082070.js.map"
   },
   "entrypoints": [
     "static/css/main.0e704a1a.css",
-    "static/js/main.d8eae3f7.js"
+    "static/js/main.c2082070.js"
   ]
 }
