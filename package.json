@@ -3,78 +3,35 @@
   "version": "0.1.0",
   "homepage": "https://billmei.github.io/social-media-formatter",
   "private": true,
+  "type": "module",
   "dependencies": {
+    "parse5": "^8.0.1",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "web-vitals": "^6.2.0"
+  },
+  "scripts": {
+    "dev": "vite",
+    "start": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.3.3",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.6",
-    "parse5": "^7.3.0",
-    "react": "^19.2.8",
-    "react-dom": "^19.2.8",
-    "react-scripts": "^5.0.1",
-    "web-vitals": "^6.2.0"
-  },
-  "scripts": {
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build",
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  },
-  "devDependencies": {
-    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
-    "autoprefixer": "^10.5.4",
+    "@vitejs/plugin-react": "^6.1.0",
+    "@vitest/coverage-v8": "^4.1.11",
     "gh-pages": "^6.3.0",
-    "postcss": "^8.5.26",
-    "tailwindcss": "^3.4.19"
-  },
-  "postcss": {
-    "plugins": {
-      "tailwindcss": {},
-      "autoprefixer": {}
-    }
-  },
-  "overrides": {
-    "js-yaml@3": "^3.15.1",
-    "minimatch@3": "^3.1.5",
-    "picomatch@2": "^2.3.2",
-    "serialize-javascript": "^7.1.0",
-    "underscore": "^1.13.8",
-    "yaml@1": "^1.10.3",
-    "http-proxy-middleware@2": "^2.0.10",
-    "uuid@8": "^11.1.1",
-    "nth-check": "^2.1.1",
-    "@tootallnate/once": "^2.0.1",
-    "eslint": {
-      "js-yaml": "^4.1.1"
-    },
-    "@eslint/eslintrc": {
-      "js-yaml": "^4.1.1"
-    },
-    "filelist": {
-      "minimatch": "^5.1.7"
-    },
-    "svgo": "^2.8.4",
-    "postcss": "^8.5.26",
-    "ajv@8": "^8.18.0"
+    "jsdom": "^30.0.1",
+    "tailwindcss": "^4.3.3",
+    "vite": "^8.2.2",
+    "vitest": "^4.1.11"
   }
 }

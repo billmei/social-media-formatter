@@ -13,34 +13,49 @@ Do not use `send_later` to re-check a PR, and do not poll with `sleep` or repeat
 status calls. If a webhook is missed, the next real event or a message from the
 user will surface it; a quiet PR needs no action.
 
-## Project notes
+## Project
 
-Create React App (`react-scripts` 5.0.1), deployed to GitHub Pages via `gh-pages`.
+React 19 + Vite, styled with Tailwind 4, deployed to GitHub Pages via `gh-pages`.
+npm only — `package-lock.json` is the lockfile, and there is no `yarn.lock`.
 
-- **npm only.** `package-lock.json` is the lockfile. There is deliberately no
-  `yarn.lock`: transitive security pins live in the `overrides` field of
-  `package.json`, and yarn 1 ignores `overrides`, so a `yarn install` would
-  silently reinstall vulnerable versions.
-- **`postcss.config.js` and the `postcss` key in `package.json` have no effect.**
-  CRA hardcodes `config: false` for postcss-loader and ignores both. It enables
-  Tailwind only when `tailwind.config.js` exists at the project root, and loads
-  the plugin under the bare name `tailwindcss`. Deleting `tailwind.config.js`
-  silently disables Tailwind.
-- **Tailwind is pinned to 3.x.** v4 moved its PostCSS plugin to
-  `@tailwindcss/postcss`, which CRA cannot be pointed at without ejecting.
-- **A green build does not mean working CSS.** A misconfigured Tailwind still
-  exits 0 while emitting zero utilities. After touching anything in the CSS
-  pipeline, check that the built file contains real utilities:
+```sh
+npm run dev       # dev server
+npm run build     # production build -> build/
+npm run preview   # serve the production build
+npm test          # vitest, single run
+npm run deploy    # predeploy builds, then publishes build/ to gh-pages
+```
+
+### Things worth knowing
+
+- **`base` must stay in sync with `homepage`.** The site is served from
+  `https://billmei.github.io/social-media-formatter/`, so `vite.config.js` sets
+  `base: "/social-media-formatter/"`. Assets 404 on GitHub Pages if this is
+  dropped. The dev server also serves under that path, not `/`.
+- **`build.outDir` is `build`, not Vite's default `dist`**, so that
+  `gh-pages -d build` keeps working.
+- **JSX only compiles in `.jsx` files.** Vite does not transform JSX inside
+  `.js`. A `.js` file containing JSX fails to build.
+- **A green build does not prove the CSS works.** A misconfigured Tailwind exits
+  0 while emitting zero utilities — this actually happened during the CRA-era
+  Tailwind 4 attempt. After touching the CSS pipeline, check for real utilities:
 
   ```sh
-  grep -c '\.max-w-4xl' build/static/css/main.*.css   # expect 1, not 0
+  grep -c '\.max-w-4xl' build/assets/index-*.css   # expect 1, not 0
   ```
-- **`parse5` is held at 7.x.** v8 is ESM-only and CRA's Jest 27 cannot resolve
-  its `exports` subpaths.
-- **`webpack-dev-server` cannot be upgraded past 4.** v5 removed the
-  `onBeforeSetupMiddleware` / `onAfterSetupMiddleware` hooks CRA calls, so
-  `npm start` fails against it. Its advisories are dev-server only and are not
-  shipped to the deployed site.
+- **Tailwind 4 has no `tailwind.config.js` and no PostCSS config.** It is wired
+  through the `@tailwindcss/vite` plugin, and `src/index.css` is just
+  `@import "tailwindcss";`. Content detection is automatic.
+- **`parse5` is the core of the app's logic** (`ContentProcessor.jsx`). It
+  converts pasted HTML into plaintext, renders headings as bold unicode, and
+  numbers links as `[n]`. Worth exercising in a browser after upgrading it, not
+  just unit-testing.
 
-Most of the above is downstream of `react-scripts` being unmaintained since 2022.
-Migrating to Vite would resolve it and remove nearly all the `overrides`.
+### History
+
+This was a Create React App project until the migration in
+[#2](https://github.com/billmei/social-media-formatter/pull/2). CRA pinned ~35
+vulnerable transitive dependencies that could not be upgraded, needed a block of
+npm `overrides` to patch what it could, ignored `postcss.config.js` entirely, and
+blocked Tailwind 4, parse5 8, and webpack-dev-server 5. Moving to Vite removed
+all of it: `npm audit` reports 0 vulnerabilities with no overrides.
